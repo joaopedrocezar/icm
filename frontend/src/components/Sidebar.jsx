@@ -17,7 +17,7 @@ const NavLink = ({ icon, label, pageName, isSidebarOpen, currentPage, setCurrent
         {icon}
         <span
           className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${
-            isSidebarOpen ? 'opacity-100' : 'opacity-0 w-0'
+            isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
           }`}
         >
           {label}
@@ -38,7 +38,7 @@ export const Sidebar = ({ isSidebarOpen, toggleSidebar, currentPage, setCurrentP
                     <ChevronsLeft className={`transition-transform duration-300 ${isSidebarOpen ? '' : 'rotate-180'}`} />
                 </button>
             </div>
-            <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+            <nav className="flex-1 p-2 space-y-1 overflow-y-auto overflow-x-hidden">
                 <p className={`px-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>GERAL</p>
                 <ul>
                     <NavLink icon={<Home size={20} />} label="Home" pageName="dashboard" isSidebarOpen={isSidebarOpen} currentPage={currentPage} setCurrentPage={setCurrentPage} />
