@@ -9,6 +9,7 @@ import { TeamsPage } from '@/components/TeamsPage';
 import { RegistrationsPage } from '@/components/RegistrationsPage';
 import { BracketsPage } from '@/components/BracketsPage';
 import { MatchesPage } from '@/components/MatchesPage';
+import { GroupsPage } from '@/components/GroupsPage';
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,6 +37,7 @@ export default function Home() {
       case 'registrations': return <RegistrationsPage />;
       case 'brackets': return <BracketsPage />;
       case 'matches': return <MatchesPage />;
+      case 'groups': return <GroupsPage />;
       default: return <DashboardPage />;
     }
   };
