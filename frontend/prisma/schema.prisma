@@ -1,0 +1,218 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+// ---
+// Definições de Tipos Enumerados (ENUMs)
+// ---
+enum TipoUsuario {
+  admin
+  professor
+}
+
+enum StatusTorneio {
+  Planejamento
+  Em_Andamento
+  Finalizado
+}
+
+enum StatusPartida {
+  Agendada
+  Em_Andamento
+  Finalizada
+}
+
+enum IdentificadorTime {
+  Time_A
+  Time_B
+}
+
+enum TipoEvento {
+  Gol
+  Ponto
+  Cartao_Amarelo
+  Cartao_Vermelho
+}
+
+
+// ---
+// Definição dos Modelos (Tabelas)
+// ---
+
+model Usuarios {
+  id_usuario   Int         @id @default(autoincrement())
+  nome_usuario String      @db.VarChar(100)
+  email_usuario String     @unique @db.VarChar(255)
+  senha_hash   String      @db.VarChar(255)
+  tipo_usuario TipoUsuario
+}
+
+model Torneio {
+  id_torneio     Int          @id @default(autoincrement())
+  nome_torneio   String       @db.VarChar(150)
+  inicio_torneio DateTime     @db.Date
+  fim_torneio    DateTime     @db.Date
+  status_torneio StatusTorneio
+
+  // Relacionamentos inversos
+  inscricoes     Inscricoes[]
+  grupos         Grupos[]
+  partidas       Partidas[]
+}
+
+model Modalidades {
+  id_modalidade   Int      @id @default(autoincrement())
+  nome_modalidade String   @unique @db.VarChar(50)
+
+  // Relacionamentos inversos
+  inscricoes      Inscricoes[]
+  grupos          Grupos[]
+}
+
+model Categorias {
+  id_categoria   Int      @id @default(autoincrement())
+  nome_categoria String   @unique @db.VarChar(50)
+
+  // Relacionamentos inversos
+  inscricoes     Inscricoes[]
+  grupos         Grupos[]
+}
+
+model Locais {
+  id_local   Int      @id @default(autoincrement())
+  nome_local String   @unique @db.VarChar(100)
+
+  // Relacionamentos inversos
+  partidas   Partidas[]
+}
+
+model Times {
+  id_times    Int      @id @default(autoincrement())
+  nome_time   String   @unique @db.VarChar(100)
+
+  // Relacionamentos inversos
+  participantes Participantes[]
+  inscricoes    Inscricoes[]
+  eventos       Eventos_Partida[]
+}
+
+model Jogadores {
+  id_jogador            Int       @id @default(autoincrement())
+  nome_jogador          String    @db.VarChar(100)
+  numero_camisa_jogador Int?
+
+  // Relacionamentos inversos
+  participantes         Participantes[]
+  eventos               Eventos_Partida[]
+}
+
+model Participantes {
+  fk_id_jogador Int
+  fk_id_times   Int
+
+  jogador Jogadores @relation(fields: [fk_id_jogador], references: [id_jogador], onDelete: Cascade)
+  time    Times     @relation(fields: [fk_id_times], references: [id_times], onDelete: Cascade)
+
+  @@id([fk_id_jogador, fk_id_times])
+}
+
+model Inscricoes {
+  id_inscricao      Int    @id @default(autoincrement())
+  fk_id_torneio     Int
+  fk_id_times       Int
+  fk_id_modalidades Int
+  fk_id_categoria   Int
+
+  torneio    Torneio     @relation(fields: [fk_id_torneio], references: [id_torneio], onDelete: Cascade)
+  time       Times       @relation(fields: [fk_id_times], references: [id_times], onDelete: Cascade)
+  modalidade Modalidades @relation(fields: [fk_id_modalidades], references: [id_modalidade])
+  categoria  Categorias  @relation(fields: [fk_id_categoria], references: [id_categoria])
+  
+  // Relacionamentos inversos
+  grupo_inscrito    Grupos_Inscricoes? // Uma inscrição só pode estar em um grupo
+  partidas_jogadas  Partida_Inscricoes[]
+
+  @@unique([fk_id_torneio, fk_id_times, fk_id_modalidades, fk_id_categoria], name: "inscricao_unica")
+}
+
+model Grupos {
+  id_grupo          Int      @id @default(autoincrement())
+  nome_grupo        String   @db.VarChar(50)
+  fk_id_torneio     Int
+  fk_id_modalidades Int
+  fk_id_categoria   Int
+
+  torneio    Torneio     @relation(fields: [fk_id_torneio], references: [id_torneio], onDelete: Cascade)
+  modalidade Modalidades @relation(fields: [fk_id_modalidades], references: [id_modalidade])
+  categoria  Categorias  @relation(fields: [fk_id_categoria], references: [id_categoria])
+
+  // Relacionamentos inversos
+  inscricoes_no_grupo Grupos_Inscricoes[]
+  partidas_no_grupo   Partidas[]
+}
+
+model Grupos_Inscricoes {
+  fk_id_grupo     Int
+  fk_id_inscricao Int @unique // Garante que uma inscrição só pode ser alocada a um grupo
+
+  grupo     Grupos     @relation(fields: [fk_id_grupo], references: [id_grupo], onDelete: Cascade)
+  inscricao Inscricoes @relation(fields: [fk_id_inscricao], references: [id_inscricao], onDelete: Cascade)
+
+  @@id([fk_id_grupo, fk_id_inscricao])
+}
+
+model Partidas {
+  id_partidas     Int            @id @default(autoincrement())
+  placar_time_A   Int?
+  placar_time_B   Int?
+  status_partida  StatusPartida  @default(Agendada)
+  fk_id_local     Int
+  fk_id_torneio   Int
+  fk_id_grupo     Int?
+
+  local   Locais   @relation(fields: [fk_id_local], references: [id_local])
+  torneio Torneio  @relation(fields: [fk_id_torneio], references: [id_torneio], onDelete: Cascade)
+  grupo   Grupos?  @relation(fields: [fk_id_grupo], references: [id_grupo])
+  
+  // Relacionamentos inversos
+  inscricoes_na_partida Partida_Inscricoes[]
+  eventos_da_partida    Eventos_Partida[]
+}
+
+model Partida_Inscricoes {
+  fk_id_partida     Int
+  fk_id_inscricao   Int
+  identificador_time IdentificadorTime
+
+  partida   Partidas   @relation(fields: [fk_id_partida], references: [id_partidas], onDelete: Cascade)
+  inscricao Inscricoes @relation(fields: [fk_id_inscricao], references: [id_inscricao], onDelete: Cascade)
+
+  @@id([fk_id_partida, fk_id_inscricao])
+}
+
+model Eventos_Partida {
+  id_evento     Int         @id @default(autoincrement())
+  tempo_partida Int?
+  tipo_evento   TipoEvento
+  pontos_gerados Int?
+  fk_id_partida Int
+  fk_id_jogador Int
+  fk_id_time    Int
+
+  partida Partidas  @relation(fields: [fk_id_partida], references: [id_partidas], onDelete: Cascade)
+  jogador Jogadores @relation(fields: [fk_id_jogador], references: [id_jogador])
+  time    Times     @relation(fields: [fk_id_time], references: [id_times])
+}
