@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Trash2, Plus, UserCircle } from 'lucide-react';
 import { Modal } from '@/components/Modal';
-import { Button, Input, CardSplat, SoccerBallIcon } from '@/components/common';
+import { Button, Input, CardSplat } from '@/components/common';
 import { mockData, courses } from '@/data';
 
 export const TeamsPage = () => {
@@ -54,7 +54,6 @@ export const TeamsPage = () => {
                             <p className="text-sm text-gray-500 dark:text-gray-400">Jogadores: {team.playersCount}</p>
                         </div>
                         <CardSplat />
-                        <div className="absolute bottom-2 right-2 z-10"><SoccerBallIcon /></div>
                     </div>
                 ))}
             </div>

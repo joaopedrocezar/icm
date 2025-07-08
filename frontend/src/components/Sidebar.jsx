@@ -14,30 +14,47 @@ const NavLink = ({ icon, label, pageName, isSidebarOpen, currentPage, setCurrent
             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
         }`}
       >
-        {icon}
-        <span
-          className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${
-            isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'
-          }`}
-        >
-          {label}
-        </span>
+        <div className={`flex items-center ${isSidebarOpen ? '' : 'justify-center w-full'}`}>
+          {icon}
+          <span
+            className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${
+              isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 absolute'
+            }`}
+          >
+            {label}
+          </span>
+        </div>
       </button>
     </li>
 );
 
 export const Sidebar = ({ isSidebarOpen, toggleSidebar, currentPage, setCurrentPage, isDarkMode, toggleDarkMode, logout }) => {
-    const logoUrl = '/Logo.png';
-    const logoRecolhidaUrl = '/LogoRecolhida.png';
+    // Lógica para escolher a logo baseada no tema e estado da sidebar
+    const getLogoUrl = () => {
+        if (isDarkMode) {
+            return isSidebarOpen ? '/ICM-logo-complete-white.png' : '/ICM-logo-white.png';
+        } else {
+            return isSidebarOpen ? '/ICM-logo-complete-black.png' : '/ICM-logo-black.png';
+        }
+    };
 
     return (
         <aside className={`bg-white dark:bg-gray-900 text-gray-800 dark:text-white flex-shrink-0 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-                <img src={isSidebarOpen ? logoUrl : logoRecolhidaUrl} alt="ICM Logo" className={`transition-all duration-300 ${isSidebarOpen ? 'h-8' : 'h-10'}`} />
-                <button onClick={toggleSidebar} className="text-gray-500 dark:text-gray-400 hover:text-red-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                    <ChevronsLeft className={`transition-transform duration-300 ${isSidebarOpen ? '' : 'rotate-180'}`} />
-                </button>
-            </div>
+            {isSidebarOpen ? (
+                <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                    <img src={getLogoUrl()} alt="ICM Logo" className="h-12 transition-all duration-300" />
+                    <button onClick={toggleSidebar} className="text-gray-500 dark:text-gray-400 hover:text-red-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <ChevronsLeft className="transition-transform duration-300" />
+                    </button>
+                </div>
+            ) : (
+                <div className="flex flex-col items-center pt-4 pb-2 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                    <img src={getLogoUrl()} alt="ICM Logo" className="h-10 transition-all duration-300 mb-2" />
+                    <button onClick={toggleSidebar} className="text-gray-500 dark:text-gray-400 hover:text-red-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <ChevronsLeft className="transition-transform duration-300 rotate-180" />
+                    </button>
+                </div>
+            )}
             <nav className="flex-1 p-2 space-y-1 overflow-y-auto overflow-x-hidden">
                 <p className={`px-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>GERAL</p>
                 <ul>
@@ -52,12 +69,16 @@ export const Sidebar = ({ isSidebarOpen, toggleSidebar, currentPage, setCurrentP
             </nav>
             <div className="p-2 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <button onClick={toggleDarkMode} className={`flex items-center w-full p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 ${!isSidebarOpen && 'justify-center'}`}>
-                    {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    <span className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>Tema</span>
+                    <div className={`flex items-center ${isSidebarOpen ? '' : 'justify-center w-full'}`}>
+                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                        <span className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 absolute'}`}>Tema</span>
+                    </div>
                 </button>
                 <button onClick={logout} className={`flex items-center w-full p-2 mt-1 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 ${!isSidebarOpen && 'justify-center'}`}>
-                    <LogOut size={20} />
-                    <span className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>Sair</span>
+                    <div className={`flex items-center ${isSidebarOpen ? '' : 'justify-center w-full'}`}>
+                        <LogOut size={20} />
+                        <span className={`ml-3 font-medium transition-all duration-200 whitespace-nowrap ${isSidebarOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0 absolute'}`}>Sair</span>
+                    </div>
                 </button>
             </div>
         </aside>
