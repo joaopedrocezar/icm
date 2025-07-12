@@ -4,7 +4,7 @@ CREATE TABLE `Usuarios` (
     `nome_usuario` VARCHAR(100) NOT NULL,
     `email_usuario` VARCHAR(255) NOT NULL,
     `senha_hash` VARCHAR(255) NOT NULL,
-    `tipo_usuario` ENUM('admin', 'professor') NOT NULL,
+    `tipo_usuario` ENUM('admin', 'staff', 'aluno') NOT NULL,
 
     UNIQUE INDEX `Usuarios_email_usuario_key`(`email_usuario`),
     PRIMARY KEY (`id_usuario`)
@@ -67,7 +67,7 @@ CREATE TABLE `Jogadores` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Participantes` (
+CREATE TABLE `participantes` (
     `fk_id_jogador` INTEGER NOT NULL,
     `fk_id_times` INTEGER NOT NULL,
 
@@ -81,6 +81,7 @@ CREATE TABLE `Inscricoes` (
     `fk_id_times` INTEGER NOT NULL,
     `fk_id_modalidades` INTEGER NOT NULL,
     `fk_id_categoria` INTEGER NOT NULL,
+    `fk_id_grupo` INTEGER NULL,
 
     UNIQUE INDEX `Inscricoes_fk_id_torneio_fk_id_times_fk_id_modalidades_fk_id_key`(`fk_id_torneio`, `fk_id_times`, `fk_id_modalidades`, `fk_id_categoria`),
     PRIMARY KEY (`id_inscricao`)
@@ -95,15 +96,6 @@ CREATE TABLE `Grupos` (
     `fk_id_categoria` INTEGER NOT NULL,
 
     PRIMARY KEY (`id_grupo`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Grupos_Inscricoes` (
-    `fk_id_grupo` INTEGER NOT NULL,
-    `fk_id_inscricao` INTEGER NOT NULL,
-
-    UNIQUE INDEX `Grupos_Inscricoes_fk_id_inscricao_key`(`fk_id_inscricao`),
-    PRIMARY KEY (`fk_id_grupo`, `fk_id_inscricao`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -129,7 +121,7 @@ CREATE TABLE `Partida_Inscricoes` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Eventos_Partida` (
+CREATE TABLE `eventos_partida` (
     `id_evento` INTEGER NOT NULL AUTO_INCREMENT,
     `tempo_partida` INTEGER NULL,
     `tipo_evento` ENUM('Gol', 'Ponto', 'Cartao_Amarelo', 'Cartao_Vermelho') NOT NULL,
@@ -142,10 +134,13 @@ CREATE TABLE `Eventos_Partida` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Participantes` ADD CONSTRAINT `Participantes_fk_id_jogador_fkey` FOREIGN KEY (`fk_id_jogador`) REFERENCES `Jogadores`(`id_jogador`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `participantes` ADD CONSTRAINT `participantes_fk_id_jogador_fkey` FOREIGN KEY (`fk_id_jogador`) REFERENCES `Jogadores`(`id_jogador`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Participantes` ADD CONSTRAINT `Participantes_fk_id_times_fkey` FOREIGN KEY (`fk_id_times`) REFERENCES `Times`(`id_times`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `participantes` ADD CONSTRAINT `participantes_fk_id_times_fkey` FOREIGN KEY (`fk_id_times`) REFERENCES `Times`(`id_times`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Inscricoes` ADD CONSTRAINT `Inscricoes_fk_id_grupo_fkey` FOREIGN KEY (`fk_id_grupo`) REFERENCES `Grupos`(`id_grupo`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Inscricoes` ADD CONSTRAINT `Inscricoes_fk_id_torneio_fkey` FOREIGN KEY (`fk_id_torneio`) REFERENCES `Torneio`(`id_torneio`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -169,12 +164,6 @@ ALTER TABLE `Grupos` ADD CONSTRAINT `Grupos_fk_id_modalidades_fkey` FOREIGN KEY 
 ALTER TABLE `Grupos` ADD CONSTRAINT `Grupos_fk_id_categoria_fkey` FOREIGN KEY (`fk_id_categoria`) REFERENCES `Categorias`(`id_categoria`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Grupos_Inscricoes` ADD CONSTRAINT `Grupos_Inscricoes_fk_id_grupo_fkey` FOREIGN KEY (`fk_id_grupo`) REFERENCES `Grupos`(`id_grupo`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Grupos_Inscricoes` ADD CONSTRAINT `Grupos_Inscricoes_fk_id_inscricao_fkey` FOREIGN KEY (`fk_id_inscricao`) REFERENCES `Inscricoes`(`id_inscricao`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `Partidas` ADD CONSTRAINT `Partidas_fk_id_local_fkey` FOREIGN KEY (`fk_id_local`) REFERENCES `Locais`(`id_local`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -190,10 +179,10 @@ ALTER TABLE `Partida_Inscricoes` ADD CONSTRAINT `Partida_Inscricoes_fk_id_partid
 ALTER TABLE `Partida_Inscricoes` ADD CONSTRAINT `Partida_Inscricoes_fk_id_inscricao_fkey` FOREIGN KEY (`fk_id_inscricao`) REFERENCES `Inscricoes`(`id_inscricao`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Eventos_Partida` ADD CONSTRAINT `Eventos_Partida_fk_id_partida_fkey` FOREIGN KEY (`fk_id_partida`) REFERENCES `Partidas`(`id_partidas`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `eventos_partida` ADD CONSTRAINT `eventos_partida_fk_id_partida_fkey` FOREIGN KEY (`fk_id_partida`) REFERENCES `Partidas`(`id_partidas`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Eventos_Partida` ADD CONSTRAINT `Eventos_Partida_fk_id_jogador_fkey` FOREIGN KEY (`fk_id_jogador`) REFERENCES `Jogadores`(`id_jogador`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `eventos_partida` ADD CONSTRAINT `eventos_partida_fk_id_jogador_fkey` FOREIGN KEY (`fk_id_jogador`) REFERENCES `Jogadores`(`id_jogador`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Eventos_Partida` ADD CONSTRAINT `Eventos_Partida_fk_id_time_fkey` FOREIGN KEY (`fk_id_time`) REFERENCES `Times`(`id_times`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `eventos_partida` ADD CONSTRAINT `eventos_partida_fk_id_time_fkey` FOREIGN KEY (`fk_id_time`) REFERENCES `Times`(`id_times`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,72 +1,32 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Trash2, Plus, UserCircle } from 'lucide-react';
 import { Modal } from '@/components/Modal';
 import { Button, Input, CardSplat } from '@/components/common';
-import { courses } from '@/data';
+import { mockData, courses } from '@/data';
 
 export const TeamsPage = () => {
-    const [teams, setTeams] = useState([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [selectedTeam, setSelectedTeam] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState('Todos');
-    const [ano, setAno] = useState('');
-    const [curso, setCurso] = useState('');
-    const [loading, setLoading] = useState(false);
-
+    
     const courseFilters = ['Todos', ...courses];
 
-    // Buscar times do banco ao carregar
-    useEffect(() => {
-        fetch('/api/teams')
-            .then(res => res.json())
-            .then(setTeams);
-    }, []);
-
-    // Filtrar times pelo curso selecionado
-    const filteredTeams = selectedCourse === 'Todos'
-        ? teams
-        : teams.filter(team => team.nome_time.includes(selectedCourse));
-
-    // Abrir modal para criar novo time
-    const openCreate = () => {
-        setSelectedTeam(null);
-        setAno('');
-        setCurso('');
+    const openDetails = (team) => {
+        setSelectedTeam(team);
         setIsDetailOpen(true);
-    };
-
-    // Enviar novo time para o backend
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!ano || !curso) return;
-        setLoading(true);
-        const nome_time = `${ano}${curso}`;
-        const res = await fetch('/api/teams', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome_time }),
-        });
-        if (res.ok) {
-            const newTeam = await res.json();
-            setTeams([...teams, newTeam]);
-            setIsDetailOpen(false);
-            setAno('');
-            setCurso('');
-        }
-        setLoading(false);
-    };
+    }
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">TIMES</h1>
                 <div className="flex items-center gap-4">
-                    <Button onClick={openCreate}><Plus size={18} className="mr-2" />Criar Novo Time</Button>
+                    <button className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"><Trash2 size={24} /></button>
+                    <Button onClick={() => openDetails(null)}>Criar Novo Time</Button>
                 </div>
             </div>
 
-            {/* Filtro de cursos */}
             <div className="flex flex-wrap gap-2 mb-6">
                 {courseFilters.map(course => (
                     <button
@@ -83,34 +43,54 @@ export const TeamsPage = () => {
                 ))}
             </div>
 
-            {/* Cards dos times */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-6">
-                {filteredTeams.length === 0 ? (
-                    <p className="col-span-full text-gray-500">Nenhum time cadastrado.</p>
-                ) : (
-                    filteredTeams.map(team => (
-                        <div
-                            key={team.id_times}
-                            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 relative overflow-hidden cursor-pointer hover:border-red-500 dark:hover:border-red-500"
-                        >
-                            <div className="relative z-10 text-center">
-                                <p className="text-xl font-bold my-4 text-gray-900 dark:text-gray-100">{team.nome_time}</p>
-                            </div>
-                            <CardSplat />
+                {mockData.teams
+                    .filter(team => selectedCourse === 'Todos' || team.course === selectedCourse)
+                    .map(team => (
+                    <div key={team.id} onClick={() => openDetails(team)} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 relative overflow-hidden cursor-pointer hover:border-red-500 dark:hover:border-red-500">
+                        <input type="checkbox" className="absolute top-2 right-2 z-20 form-checkbox h-4 w-4 text-red-600 rounded border-gray-300 dark:border-gray-600 focus:ring-red-500 bg-white dark:bg-gray-900" onClick={e => e.stopPropagation()} />
+                        <div className="relative z-10 text-center">
+                            <p className="text-xl font-bold my-4 text-gray-900 dark:text-gray-100">{team.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Jogadores: {team.playersCount}</p>
                         </div>
-                    ))
-                )}
-            </div>
-
-            {/* Modal para criar novo time */}
-            <Modal isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} title="Criar Novo Time" size="max-w-2xl">
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                    <Input label="Ano do Time" placeholder="Ex: 1º" value={ano} onChange={e => setAno(e.target.value)} />
-                    <Input label="Curso do Time" placeholder="Ex: ETIQ" value={curso} onChange={e => setCurso(e.target.value)} />
-                    <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={loading}>{loading ? 'Salvando...' : 'Salvar'}</Button>
+                        <CardSplat />
                     </div>
-                </form>
+                ))}
+            </div>
+            <Modal isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} title={selectedTeam ? selectedTeam.name : 'Criar Novo Time'} size="max-w-2xl">
+                {selectedTeam ? (
+                    <div className="space-y-4">
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <h4 className="font-bold border-b-2 border-gray-200 dark:border-gray-700 w-full pb-1 text-gray-900 dark:text-gray-100">JOGADORES</h4>
+                                <button className="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center -mb-2 flex-shrink-0"><Plus size={16} /></button>
+                            </div>
+                            <div className="space-y-2">
+                                {selectedTeam.players.map(p => (
+                                    <div key={p.id} className="flex items-center justify-between text-gray-700 dark:text-gray-300">
+                                        <div className="flex items-center gap-2">
+                                            <UserCircle size={24} className="text-gray-400" />
+                                            <span>{p.name}</span>
+                                            <span className="font-bold">{p.points} PONTOS</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-red-600">{p.red}</span>
+                                            <span className="font-bold text-yellow-500">{p.yellow}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                     <form className="space-y-4">
+                        <Input label="Nome do Time" placeholder="Ex: 1º ETIM" />
+                        <Input label="Curso" placeholder="Ex: DS" />
+                        <div className="flex justify-end pt-4">
+                            <Button type="submit">Salvar</Button>
+                        </div>
+                    </form>
+                )}
             </Modal>
         </div>
     );
