@@ -60,7 +60,13 @@ export const SeasonsPage = () => {
                 <Button onClick={handleCreate}>Nova Temporada</Button>
             </div>
             <div className="space-y-4">
-                {mockData.seasons.map(season => <AccordionItem key={season.id} season={season} onEdit={handleEdit} />)}
+                {mockData.seasons.length === 0 ? (
+                    <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                        <p className="mb-4 text-lg">Nenhuma temporada cadastrada.</p>
+                        <Button onClick={handleCreate}>Nova Temporada</Button>
+                    </div>
+                ) : (
+                mockData.seasons.map(season => <AccordionItem key={season.id} season={season} onEdit={handleEdit} />))}
             </div>
             <Modal isOpen={isModalOpen} onClose={closeModal} title={editingSeason ? "EDITAR TEMPORADA" : "INFORMAÇÕES DA TEMPORADA"}>
                 <form className="space-y-4">

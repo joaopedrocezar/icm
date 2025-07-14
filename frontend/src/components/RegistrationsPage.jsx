@@ -33,7 +33,13 @@ export const RegistrationsPage = () => {
             <div>
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">ESPORTES</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {mockData.registrations.sports.map(item => (
+                    {mockData.registrations.sports.length === 0 ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                            <p className="mb-4 text-lg">Não há nenhum registro de esportes, cadastre um primeiro</p>
+                            <Button onClick={handleCreate}>Cadastrar Novo</Button>
+                        </div>
+                    ) : (
+                    mockData.registrations.sports.map(item => (
                         <div key={item.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 relative overflow-hidden">
                             <div className="relative z-10">
                                 <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">{item.name}</h3>
@@ -45,13 +51,19 @@ export const RegistrationsPage = () => {
                             </div>
                             <CardSplat />
                         </div>
-                    ))}
+                    )))}
                 </div>
             </div>
              <div>
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">LOCAIS</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {mockData.registrations.locations.map(item => (
+                        {mockData.registrations.locations.length === 0 ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                            <p className="mb-4 text-lg">Não há nenhum registro de locais, cadastre um primeiro</p>
+                            <Button onClick={handleCreate}>Cadastrar Novo</Button>
+                        </div>
+                    ) : (
+                    mockData.registrations.locations.map(item => (
                         <div key={item.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 relative overflow-hidden">
                             <div className="relative z-10">
                                 <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">{item.name}</h3>
@@ -63,7 +75,7 @@ export const RegistrationsPage = () => {
                             </div>
                             <CardSplat />
                         </div>
-                    ))}
+                    )))}
                 </div>
             </div>
             <Modal isOpen={isModalOpen} onClose={closeModal} title={editingItem ? "EDITAR CADASTRO" : "CRIAR CADASTRO"}>

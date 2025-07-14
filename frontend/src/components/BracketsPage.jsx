@@ -18,7 +18,12 @@ export const BracketsPage = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
-                {modalities.map(modality => (
+                {modalities.length === 0 ? (
+                    <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                        <p className="mb-4 text-lg">Não há nenhum grupo formado, crie um antes de prosseguir</p>
+                    </div>
+                ) : (
+                modalities.map(modality => (
                     <div key={modality.name}>
                         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">{modality.name}</h2>
                         <div className="space-y-4 relative">
@@ -32,7 +37,7 @@ export const BracketsPage = () => {
                             ))}
                         </div>
                     </div>
-                ))}
+                )))}
             </div>
         </div>
     );

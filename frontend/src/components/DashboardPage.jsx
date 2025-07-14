@@ -16,7 +16,12 @@ export const DashboardPage = () => {
       <div>
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">PARTIDAS ATUAIS</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {mockData.matches.filter(m => m.status === 'Próximo').slice(0, 2).map(match => (
+          {mockData.matches.filter(m => m.status === 'Próximo').length === 0 ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                <p className="mb-4 text-lg">Não há partidas atuais no momento.</p>
+            </div>
+          ) : (
+          mockData.matches.filter(m => m.status === 'Próximo').slice(0, 2).map(match => (
             <div key={match.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 relative overflow-hidden">
               <div className="relative z-10">
                 <p className="text-sm text-gray-500 dark:text-gray-400">PARTIDA ATUAL</p>
@@ -28,7 +33,7 @@ export const DashboardPage = () => {
               <CardSplat />
               <div className="absolute bottom-4 right-4 z-10"><SoccerBallIcon /></div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
       <div>
@@ -37,7 +42,12 @@ export const DashboardPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 divide-x-0 md:divide-x divide-gray-200 dark:divide-gray-700">
             <div className="pr-0 md:pr-6">
               <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">FUTSAL</h3>
-              {mockData.highlightedPlayers.futsal.map((player, i) => <p key={i} className="text-gray-600 dark:text-gray-300">{player.name} - {player.points} pontos</p>)}
+              {mockData.highlightedPlayers.futsal.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                  <p className="mb-4 text-lg">Não há jogadores em destaque.</p>
+                </div>
+              ) : (
+              mockData.highlightedPlayers.futsal.map((player, i) => <p key={i} className="text-gray-600 dark:text-gray-300">{player.name} - {player.points} pontos</p>))}
             </div>
             <div className="pl-0 md:pl-6">
               <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-gray-100">VÔLEI</h3>
@@ -60,7 +70,12 @@ export const DashboardPage = () => {
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
           <table className="w-full">
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {mockData.matches.map(match => (
+              {mockData.matches.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+                  <p className="mb-4 text-lg">Não há nenhuma partida registrada.</p>
+                </div>
+              ) : (
+              mockData.matches.map(match => (
                 <tr key={match.id}>
                   <td className="p-4 text-gray-800 dark:text-gray-200 font-semibold">{match.team1} VS {match.team2}</td>
                   <td className="p-4 text-gray-600 dark:text-gray-300">{match.modality}</td>
@@ -68,7 +83,7 @@ export const DashboardPage = () => {
                   <td className="p-4 text-gray-600 dark:text-gray-300">{match.location}</td>
                   <td className="p-4 text-right"><Button onClick={() => setSelectedMatch(match)}>Ver Súmula</Button></td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

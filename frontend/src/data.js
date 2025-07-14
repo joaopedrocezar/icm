@@ -21,11 +21,13 @@ for (const course of courses) {
     }
 }
 
+// const filteredTeams = seededTeams.filter(team => team.course !== "ADA");
+
 export const mockData = {
   seasons: [
     { id: 1, name: 'INTERCLASSES - TEMPORADA 7', date: '26/05 - 30/05', location: 'ETEC JOÃO BELARMINO', description: 'A 7ª edição dos jogos interclasses da ETEC João Belarmino, promovendo a integração e o espírito esportivo entre os alunos de todos os cursos.', modalities: 'Futsal, Vôlei, Basquete e Handebol' },
   ],
-  teams: seededTeams,
+  teams: seededTeams, // filteredTeams
   registrations: {
     sports: [
       { id: 1, name: 'Futsal', description: 'O Futsal será disputado na quadra de cima, com times de 5 jogadores em quadra e pontuação baseada em gols.' },
