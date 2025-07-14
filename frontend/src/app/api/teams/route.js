@@ -9,11 +9,11 @@ export async function GET() {
   try {
     // 1. Usa o Prisma para buscar todos os registros na tabela 'times'.
     // O 'findMany()' retorna uma lista de todos os times encontrados.
-    const teams = await prisma.times.findMany();
+    const times = await prisma.times.findMany();
 
     // 2. Retorna os times encontrados como uma resposta JSON com status 200 (OK).
     // NextResponse.json() é a forma padrão do Next.js de criar respostas de API.
-    return NextResponse.json(teams, { status: 200 });
+    return NextResponse.json(times, { status: 200 });
 
   } catch (error) {
     // 3. Se ocorrer qualquer erro no bloco 'try', o 'catch' é executado.
@@ -41,13 +41,13 @@ export async function POST(request) {
     }
 
     // 3. Mudança aqui: Criamos o time no banco de dados apenas com o nome_time.
-    const newTeam = await prisma.times.create({
+    const novoTime = await prisma.times.create({
       data: {
         nome_time,
       },
     });
 
-    return NextResponse.json(newTeam, { status: 201 });
+    return NextResponse.json(novoTime, { status: 201 });
 
   } catch (error) {
     console.error("Erro ao criar time:", error);

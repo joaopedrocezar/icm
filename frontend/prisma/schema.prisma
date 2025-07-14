@@ -119,7 +119,7 @@ model Times {
 model Jogadores {
   id_jogador            Int               @id @default(autoincrement())
   nome_jogador          String            @db.VarChar(100)
-  numero_camisa_jogador Int?
+  camisa_jogador        String?
 
   // Relacionamentos inversos
   participantes         Jogadores_times[]
