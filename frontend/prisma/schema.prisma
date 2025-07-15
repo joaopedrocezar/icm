@@ -189,11 +189,11 @@ model Partidas {
   placar_time_A        Int?
   placar_time_B        Int?
   status_partida       StatusPartida      @default(Agendada)
-  fk_id_local          Int
+  fk_id_local          Int?
   fk_id_torneio        Int
   fk_id_grupo          Int?
 
-  local                Locais             @relation(fields: [fk_id_local], references: [id_local])
+  local                Locais?             @relation(fields: [fk_id_local], references: [id_local])
   torneio              Torneio            @relation(fields: [fk_id_torneio], references: [id_torneio], onDelete: Cascade)
   grupo                Grupos?            @relation(fields: [fk_id_grupo], references: [id_grupo])
 

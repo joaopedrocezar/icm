@@ -1,17 +1,36 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Rota GET: Retorna todas as inscrições com seus detalhes relacionados
-export async function GET() {
+// Rota GET: Retorna todas as inscrições OU inscrições filtradas por Torneio, Modalidade e Categoria
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const fk_id_torneio = searchParams.get('idTorneio');
+    const fk_id_modalidades = searchParams.get('idModalidade');
+    const fk_id_categoria = searchParams.get('idCategoria');
+
+    const whereClause = {};
+
+    // Adiciona filtros se os parâmetros forem fornecidos
+    if (fk_id_torneio) {
+      whereClause.fk_id_torneio = parseInt(fk_id_torneio, 10);
+    }
+    if (fk_id_modalidades) {
+      whereClause.fk_id_modalidades = parseInt(fk_id_modalidades, 10);
+    }
+    if (fk_id_categoria) {
+      whereClause.fk_id_categoria = parseInt(fk_id_categoria, 10);
+    }
+
     const inscricoes = await prisma.inscricoes.findMany({
+      where: whereClause, // Aplica os filtros
       include: {
-        torneio: true,      // Inclui os dados do torneio
-        time: true,         // Inclui os dados do time
-        modalidade: true,   // Inclui os dados da modalidade
-        categoria: true,    // Inclui os dados da categoria
-        grupo: true,        // Inclui os dados do grupo (se houver)
-        partidas_jogadas: { // Inclui as partidas em que a inscrição está envolvida
+        torneio: true,
+        time: true,
+        modalidade: true,
+        categoria: true,
+        grupo: true,
+        partidas_jogadas: {
             include: {
                 partida: true
             }
@@ -19,7 +38,6 @@ export async function GET() {
       }
     });
 
-    // Opcional: Você pode aplicar a mesma lógica de formatação de JSON aqui para o GET ALL
     const inscricoesFormatadas = inscricoes.map(inscricao => {
       const nomeDoGrupo = inscricao.grupo ? inscricao.grupo.nome_grupo : null;
       const partidasFormatadas = inscricao.partidas_jogadas.map(pj => ({
@@ -35,8 +53,8 @@ export async function GET() {
         nome_time: inscricao.time.nome_time,
         nome_modalidade: inscricao.modalidade.nome_modalidade,
         nome_categoria: inscricao.categoria.nome_categoria,
-        nome_grupo: nomeDoGrupo, // Será null se não tiver grupo
-        partidas_jogadas: partidasFormatadas, // Array de partidas simplificada
+        nome_grupo: nomeDoGrupo,
+        partidas_jogadas: partidasFormatadas,
       };
     });
 
@@ -46,6 +64,8 @@ export async function GET() {
     return NextResponse.json({ message: "Não foi possível buscar as inscrições." }, { status: 500 });
   }
 }
+
+// ... (A função POST para inscrições permanece inalterada)
 
 // Rota POST: Cria uma nova inscrição
 export async function POST(request) {

@@ -3,24 +3,45 @@ import { prisma } from "@/lib/prisma"; // Importa o cliente Prisma para interagi
 
 /**
  * Função para lidar com requisições GET
- * Objetivo: Buscar todos os times do banco de dados.
+ * Objetivo: Buscar todos os times do banco de dados, incluindo os nomes dos participantes.
  */
 export async function GET() {
   try {
-    // 1. Usa o Prisma para buscar todos os registros na tabela 'times'.
-    // O 'findMany()' retorna uma lista de todos os times encontrados.
-    const times = await prisma.times.findMany();
+    const times = await prisma.times.findMany({
+      include: {
+        // CORRIGIDO: O nome do relacionamento no model Times é 'participantes'
+        participantes: {
+          include: {
+            // Inclui o modelo 'Jogador' que está relacionado via a tabela pivô 'Jogadores_times'
+            jogador: {
+              select: {
+                nome_jogador: true, // Seleciona apenas o nome do jogador
+                // Adicione outros campos do jogador se precisar, ex: numero_camisa_jogador
+              },
+            },
+          },
+        },
+      },
+    });
 
-    // 2. Retorna os times encontrados como uma resposta JSON com status 200 (OK).
-    // NextResponse.json() é a forma padrão do Next.js de criar respostas de API.
-    return NextResponse.json(times, { status: 200 });
+    // Formata a resposta para incluir uma lista simples de nomes de participantes por time.
+    const timesFormatados = times.map(time => ({
+      id_times: time.id_times, // Note que o campo no banco é id_times
+      nome_time: time.nome_time,
+      // Mapeia os participantes do time para extrair apenas os nomes dos jogadores
+      nomes_participantes: time.participantes.map(
+        // Aqui 'p' é um registro da tabela Jogadores_times
+        p => p.jogador.nome_jogador // Acessa o jogador relacionado e seu nome
+      ),
+    }));
 
+    return NextResponse.json(timesFormatados, { status: 200 });
   } catch (error) {
-    // 3. Se ocorrer qualquer erro no bloco 'try', o 'catch' é executado.
-    console.error("Erro ao buscar times:", error); // Mostra o erro no console do servidor para depuração.
-    
-    // Retorna uma mensagem de erro com status 500 (Erro Interno do Servidor).
-    return NextResponse.json({ message: "Não foi possível buscar os times." }, { status: 500 });
+    console.error("Erro ao buscar times e participantes:", error);
+    return NextResponse.json(
+      { message: "Não foi possível buscar os times e seus participantes." },
+      { status: 500 }
+    );
   }
 }
 
