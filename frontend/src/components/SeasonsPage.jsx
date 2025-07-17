@@ -54,13 +54,15 @@ export const SeasonsPage = () => {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">TEMPORADAS</h1>
-                <Button onClick={handleCreate}>Nova Temporada</Button>
-            </div>
-            <div className="space-y-4">
-                {mockData.seasons.map(season => <AccordionItem key={season.id} season={season} onEdit={handleEdit} />)}
+        <>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">TEMPORADAS</h1>
+                    <Button onClick={handleCreate}>Nova Temporada</Button>
+                </div>
+                <div className="space-y-4">
+                    {mockData.seasons.map(season => <AccordionItem key={season.id} season={season} onEdit={handleEdit} />)}
+                </div>
             </div>
             <Modal isOpen={isModalOpen} onClose={closeModal} title={editingSeason ? "EDITAR TEMPORADA" : "INFORMAÇÕES DA TEMPORADA"}>
                 <form className="space-y-4">
@@ -74,6 +76,6 @@ export const SeasonsPage = () => {
                     </div>
                 </form>
             </Modal>
-        </div>
+        </>
     );
 };
