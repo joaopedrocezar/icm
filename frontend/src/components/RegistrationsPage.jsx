@@ -24,10 +24,12 @@ export const RegistrationsPage = () => {
     return (
         <>
             <div className="space-y-8">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-wrap justify-between items-center gap-4">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">CADASTROS</h1>
                     <div className="flex items-center gap-4">
-                        <button className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"><Trash2 size={24} /></button>
+                        <button className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400">
+                            <Trash2 size={24} />
+                        </button>
                         <Button onClick={handleCreate}>Cadastrar Novo</Button>
                     </div>
                 </div>
@@ -49,7 +51,7 @@ export const RegistrationsPage = () => {
                         ))}
                     </div>
                 </div>
-                 <div>
+                <div>
                     <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">LOCAIS</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {mockData.registrations.locations.map(item => (
@@ -75,8 +77,8 @@ export const RegistrationsPage = () => {
                         <option>Esportes</option>
                         <option>Locais</option>
                     </Select>
-                    <Input label="Nome do Cadastro" placeholder="Placeholder" defaultValue={editingItem?.name}/>
-                    <Textarea label="Descrição" placeholder="Placeholder" defaultValue={editingItem?.description}/>
+                    <Input label="Nome do Cadastro" placeholder="Placeholder" defaultValue={editingItem?.name} />
+                    <Textarea label="Descrição" placeholder="Placeholder" defaultValue={editingItem?.description} />
                     <div className="flex justify-end pt-4">
                         <Button type="submit">Salvar</Button>
                     </div>

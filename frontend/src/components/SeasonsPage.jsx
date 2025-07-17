@@ -45,7 +45,7 @@ export const SeasonsPage = () => {
         setEditingSeason(season);
         setIsModalOpen(true);
     }
-    
+
     const handleCreate = () => {
         setEditingSeason(null);
         setIsModalOpen(true);
@@ -56,21 +56,21 @@ export const SeasonsPage = () => {
     return (
         <>
             <div className="space-y-6">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-wrap justify-between items-start gap-4">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">TEMPORADAS</h1>
                     <Button onClick={handleCreate}>Nova Temporada</Button>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4"> {/* Corrigido indentação aqui */}
                     {mockData.seasons.map(season => <AccordionItem key={season.id} season={season} onEdit={handleEdit} />)}
                 </div>
             </div>
-            <Modal isOpen={isModalOpen} onClose={closeModal} title={editingSeason ? "EDITAR TEMPORADA" : "INFORMAÇÕES DA TEMPORADA"}>
+            <Modal isOpen={isModalOpen} onClose={closeModal} title={editingSeason ? "Editar Temporada" : "Nova Temporada"}> {/* Ajustado texto do título */}
                 <form className="space-y-4">
-                    <Input label="Nome do Torneio" placeholder="Placeholder" defaultValue={editingSeason?.name}/>
-                    <Input label="Local" placeholder="Placeholder" defaultValue={editingSeason?.location}/>
-                    <Textarea label="Descrição" placeholder="Placeholder" defaultValue={editingSeason?.description}/>
-                    <Input label="Selecionar Data" type="text" placeholder="dd/mm - dd/mm" defaultValue={editingSeason?.date}/>
-                    <Input label="Modalidades" placeholder="Placeholder" defaultValue={editingSeason?.modalities}/>
+                    <Input label="Nome do Torneio" placeholder="Digite o nome" defaultValue={editingSeason?.name} />
+                    <Input label="Local" placeholder="Digite o local" defaultValue={editingSeason?.location} />
+                    <Textarea label="Descrição" placeholder="Digite a descrição" defaultValue={editingSeason?.description} />
+                    <Input label="Data" type="text" placeholder="dd/mm - dd/mm" defaultValue={editingSeason?.date} />
+                    <Input label="Modalidades" placeholder="Digite as modalidades" defaultValue={editingSeason?.modalities} />
                     <div className="flex justify-end pt-4">
                         <Button type="submit">Salvar</Button>
                     </div>
