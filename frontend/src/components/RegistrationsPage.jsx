@@ -78,7 +78,6 @@ export const RegistrationsPage = () => {
                         <option>Locais</option>
                     </Select>
                     <Input label="Nome do Cadastro" placeholder="Placeholder" defaultValue={editingItem?.name} />
-                    <Textarea label="Descrição" placeholder="Placeholder" defaultValue={editingItem?.description} />
                     <div className="flex justify-end pt-4">
                         <Button type="submit">Salvar</Button>
                     </div>

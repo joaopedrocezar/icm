@@ -28,14 +28,14 @@ export const mockData = {
   teams: seededTeams,
   registrations: {
     sports: [
-      { id: 1, name: 'Futsal', description: 'O Futsal será disputado na quadra de cima, com times de 5 jogadores em quadra e pontuação baseada em gols.' },
-      { id: 2, name: 'Basquete', description: 'O Basquete terá seus jogos na quadra de baixo, com regras oficiais da CBB.' },
-      { id: 3, name: 'Vôlei', description: 'As partidas de Vôlei acontecerão na quadra de baixo, em formato de sets.' },
-      { id: 4, name: 'Handebol', description: 'O Handebol será jogado na quadra de cima, seguindo as regras da IHF.' },
+      { id: 1, name: 'Futsal' },
+      { id: 2, name: 'Basquete' },
+      { id: 3, name: 'Vôlei' },
+      { id: 4, name: 'Handebol' },
     ],
     locations: [
-      { id: 1, name: 'QUADRA DE CIMA', description: 'Esportes: Handebol & Futsal' },
-      { id: 2, name: 'QUADRA DE BAIXO', description: 'Esportes: Vôlei e Basquete' },
+      { id: 1, name: 'QUADRA DE CIMA' },
+      { id: 2, name: 'QUADRA DE BAIXO' },
     ]
   },
   matches: [

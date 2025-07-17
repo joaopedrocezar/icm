@@ -25,7 +25,6 @@ const AccordionItem = ({ season, onEdit }) => {
                         <p><span className="font-semibold">Local:</span> {season.location}</p>
                         <p><span className="font-semibold">Data:</span> {season.date}</p>
                         <p><span className="font-semibold">Modalidades:</span> {season.modalities}</p>
-                        <p><span className="font-semibold">Descrição:</span> {season.description}</p>
                     </div>
                     <div className="flex justify-end gap-2 mt-4 relative z-10">
                         <Button variant="primary">Selecionar</Button>
@@ -68,7 +67,6 @@ export const SeasonsPage = () => {
                 <form className="space-y-4">
                     <Input label="Nome do Torneio" placeholder="Digite o nome" defaultValue={editingSeason?.name} />
                     <Input label="Local" placeholder="Digite o local" defaultValue={editingSeason?.location} />
-                    <Textarea label="Descrição" placeholder="Digite a descrição" defaultValue={editingSeason?.description} />
                     <Input label="Data" type="text" placeholder="dd/mm - dd/mm" defaultValue={editingSeason?.date} />
                     <Input label="Modalidades" placeholder="Digite as modalidades" defaultValue={editingSeason?.modalities} />
                     <div className="flex justify-end pt-4">
